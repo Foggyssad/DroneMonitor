@@ -1,15 +1,16 @@
-# DroneMonitor – Remote ID Data Collector & Analyzer (C# .NET)
+# DroneMonitor – Remote ID Data Collector and Analyzer (C# .NET)
 
-This project processes BLE-based OpenDroneID / Remote ID telemetry exported from Wireshark.  
-The program collects messages from a CSV file, groups them into tracks per transmitter, and computes data-quality metrics such as message gaps, static altitude, and duplicate messages.  
+This project processes OpenDroneID / Remote ID telemetry exported from Wireshark (with the open source OpenDroneID dissector plugin) obtained by the Nordic BLE sniffer. A separate DJI transmitter PCB was used for testing.
+
+The program collects messages from a .csv file, groups them into tracks per MAC address, and computes metrics, such as: amount of messages, message rate, amount of duplicate messages, duration of overall transmition per the MAC address.
 It also demonstrates a wide range of C# language features required by the assignment.
 
 ---
 
-## Features
+## Features (Functional Requirements)
 
-### Data Collection & Processing
-- Imports and parses Wireshark-exported CSV files.
+### Data Collection and Processing
+- Imports and parses .csv files exported from the Wireshark.
 - Groups messages by BLE MAC address into **DroneTracks**.
 - Calculates per-track:
   - Total messages
@@ -23,7 +24,7 @@ It also demonstrates a wide range of C# language features required by the assign
 ### C# Requirements Implemented
 - Custom interfaces (`IDroneMessage`, `IDroneTrack`, `IAlertable`)
 - `IComparable<T>` for ordering tracks
-- `IEquatable<T>` for message equality
+- `IEquatable<T>` for message equality (used in the duplicate identification)
 - `IFormattable`
 - Pattern matching with `switch` + `when`
 - Range operator (`^1`, etc.)
@@ -54,7 +55,7 @@ The main message types present in the capture:
 | **System Message (4)** | System properties, status flags. |
 | **Operator ID (5)** | Operator registration identifier. |
 
-### CSV Columns Used
+### .csv Columns Used (Please, manually select them in the Wireshark before exporting)
 | Column | Meaning |
 |--------|---------|
 | Arrival Time | UTC timestamp when Wireshark captured the frame |
@@ -64,14 +65,52 @@ The main message types present in the capture:
 | Message Type | OpenDroneID message type |
 | Message Counter | Sequence counter |
 
-Note: BLE privacy causes a single transmitter to rotate MAC addresses, so one physical drone may produce multiple “tracks.”
+Note: BLE encryption protol causes the transmitter to rotate MAC addresses, so one physical transmitter may produce multiple tracks.
 
 ---
 
-## Building and Running the Program
+## Building the Program
 
 From the repo root:
 
 ```bash
 dotnet build
 cd DroneMonitor.App && dotnet run -- "test_DroneID_data.csv"
+```
+---
+
+## Usage
+
+# Process the existing .csv file (default mode)
+
+From the repo root:
+
+```bash
+dotnet run --project DroneMonitor.App -- "DroneMonitor.App/test_DroneID_data.csv"
+```
+
+or if you prefer to run from inside the DroneMonitor.App directory:
+
+```bash
+cd DroneMonitor.App && dotnet run -- "test_DroneID_data.csv"
+```
+
+# Collect (Append) one new message via CLI to the existing .csv file
+
+This starts interactive prompts and appends a new row to the .csv file:
+
+```bash
+dotnet run --project DroneMonitor.App -- "DroneMonitor.App/test_DroneID_data.csv" collect
+```
+
+You will be asked to enter:
+
+- MAC (Source)
+
+- Basic ID (optional)
+
+- Pressure Altitude feet (optional)
+
+- Message Type (Basic ID / Location/Vector / Operator ID / System)
+
+- Message Counter (optional)

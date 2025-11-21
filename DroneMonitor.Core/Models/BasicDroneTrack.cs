@@ -72,7 +72,7 @@ namespace DroneMonitor.Core.Models
 
             switch (dt)
             {
-                case var _ when dt > MaxAllowedGap:
+                case TimeSpan gap when gap > MaxAllowedGap:
                     Status |= DroneStatusFlags.HasGaps;
                     AddAlertOnce("Message gaps detected");
                     break;

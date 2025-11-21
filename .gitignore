@@ -1,0 +1,38 @@
+## Build results
+bin/
+obj/
+out/
+
+## Visual Studio Code
+.vscode/
+*.code-workspace
+
+## Temporary files
+*.tmp
+*.temp
+*.log
+
+## Backup files
+*.bak
+*~
+
+## OS junk
+.DS_Store
+Thumbs.db
+
+## User-specific .NET files
+*.user
+*.suo
+
+## NuGet
+*.nupkg
+packages/
+
+## SQLite / temporary DB
+*.db
+*.sqlite
+*.sqlite3
+
+## JetBrains Rider
+.idea/
+*.sln.iml

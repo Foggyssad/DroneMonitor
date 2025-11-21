@@ -80,7 +80,7 @@ dotnet build
 
 ## Usage
 
-# Process the existing .csv file (default mode)
+### Process the existing .csv file (default mode)
 
 From the repo root:
 
@@ -94,7 +94,7 @@ or if you prefer to run from inside the DroneMonitor.App directory:
 cd DroneMonitor.App && dotnet run -- "test_DroneID_data.csv"
 ```
 
-# Collect (Append) one new message via CLI to the existing .csv file
+### Collect (Append) one new message via CLI to the existing .csv file
 
 This starts interactive prompts and appends a new row to the .csv file:
 

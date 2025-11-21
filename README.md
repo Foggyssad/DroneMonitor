@@ -32,7 +32,7 @@ It also demonstrates a wide range of C# language features required by the assign
 - Abstract classes
 - Sealed classes
 - Static constructor
-- Deconstructor usage (`var (ts, mac, mc) = msg`)
+- Deconstructor usage
 - Delegates / lambda functions (sorting, parsing)
 - Bitwise operations with enum flags
 - Null-coalescing operators (`??`, `?.`)

@@ -75,7 +75,6 @@ From the repo root:
 
 ```bash
 dotnet build
-cd DroneMonitor.App && dotnet run -- "test_DroneID_data.csv"
 ```
 ---
 

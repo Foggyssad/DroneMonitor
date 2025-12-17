@@ -1,8 +1,9 @@
+using System.Collections;
 using DroneMonitor.Core.Interfaces;
 
 namespace DroneMonitor.Core.Models;
 
-public abstract class DroneTrack : IDroneTrack
+public abstract class DroneTrack : IDroneTrack, IEnumerable<DroneMessage>
 {
     protected readonly List<DroneMessage> _messages = new List<DroneMessage>();
 
@@ -33,7 +34,6 @@ public abstract class DroneTrack : IDroneTrack
             }
 
             List<DroneMessage> ordered = new List<DroneMessage>(_messages);
-
             ordered.Sort((a, b) => a.Timestamp.CompareTo(b.Timestamp));
 
             DateTime t0 = ordered[0].Timestamp;
@@ -42,7 +42,7 @@ public abstract class DroneTrack : IDroneTrack
             return t_last - t0;
         }
     }
-    
+
     public void Add(DroneMessage message)
     {
         _messages.Add(message);
@@ -50,4 +50,14 @@ public abstract class DroneTrack : IDroneTrack
     }
 
     protected abstract void OnMessageAdded(DroneMessage message);
+
+    public IEnumerator<DroneMessage> GetEnumerator()
+    {
+        return new DroneMessageEnumerator(_messages);
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 }

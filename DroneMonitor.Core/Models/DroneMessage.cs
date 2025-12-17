@@ -11,7 +11,7 @@ public enum DroneMessageType
 
 namespace DroneMonitor.Core.Models
 {
-    public class DroneMessage : IDroneMessage, IEquatable<DroneMessage>, IFormattable
+    public class DroneMessage : IDroneMessage, IEquatable<DroneMessage>, IFormattable, ICloneable
     {
         public DateTime Timestamp { get; set; }
         public string MacAddress { get; set; } = string.Empty;
@@ -91,6 +91,18 @@ namespace DroneMonitor.Core.Models
         public override string ToString()
         {
             return ToString(null, null);
+        }
+
+        public object Clone()
+        {
+            return new DroneMessage(
+                Timestamp,
+                MacAddress,
+                BasicId,
+                PressureAltitudeFeet,
+                MessageType,
+                MessageCounter
+            );
         }
     }
 }

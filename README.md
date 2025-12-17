@@ -2,7 +2,7 @@
 
 This project processes OpenDroneID / Remote ID telemetry exported from Wireshark (with the open source OpenDroneID dissector plugin) obtained by the Nordic BLE sniffer. A separate DJI transmitter PCB was used for testing.
 
-The program collects messages from a .csv file, groups them into tracks per MAC address, and computes metrics, such as: amount of messages, message rate, amount of duplicate messages, duration of overall transmition per the MAC address.
+The program collects messages from a .csv file, groups them into tracks per MAC address, and computes metrics, such as: amount of messages, message rate, amount of duplicate messages, duration of overall transmition per the MAC address.  
 It also demonstrates a wide range of C# language features required by the assignment.
 
 ---
@@ -41,6 +41,22 @@ It also demonstrates a wide range of C# language features required by the assign
 
 ---
 
+## Advanced C# Features (Second Assignment)
+
+Additional functionality was implemented mainly in the `DroneMonitor.Analytics` module:
+
+- Custom iteration using `IEnumerable<T>` and `IEnumerator<T>` over drone messages.
+- Explicit iterator usage via `foreach` in the application logic.
+- Generic analytics container with constraints (`MetricAccumulator<T>` using `where`).
+- Custom exception hierarchy with centralized `try–catch` handling.
+- Extension methods and an extension deconstructor for `DroneTrack` reporting.
+- Event-based message observation (`TrackEventHub`).
+- Safe message snapshotting via `ICloneable`.
+
+These features are exercised during normal execution and reporting.
+
+---
+
 ## Remote ID / OpenDroneID Format (Short Theory Section)
 
 Remote ID (OpenDroneID) is a standard for unmanned aircraft to broadcast identity and telemetry via BLE or Wi-Fi.  
@@ -65,7 +81,7 @@ The main message types present in the capture:
 | Message Type | OpenDroneID message type |
 | Message Counter | Sequence counter |
 
-Note: BLE encryption protol causes the transmitter to rotate MAC addresses, so one physical transmitter may produce multiple tracks.
+Note: BLE encryption protocol causes the transmitter to rotate MAC addresses, so one physical transmitter may produce multiple tracks.
 
 ---
 

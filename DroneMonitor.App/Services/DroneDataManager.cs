@@ -1,5 +1,6 @@
 using DroneMonitor.Core.Models;
 using DroneMonitor.Core.Utils;
+using DroneMonitor.Analytics.Exceptions;
 
 namespace DroneMonitor.App.Services
 {
@@ -14,34 +15,65 @@ namespace DroneMonitor.App.Services
 
         public int LoadFromCsv(string path, bool skipHeader = true)
         {
-            if (!File.Exists(path))
-                throw new FileNotFoundException(path);
-
-            int count = 0;
-            using (StreamReader sr = new StreamReader(path))
+            try
             {
-                string? line;
-                bool first = true;
-
-                while ((line = sr.ReadLine()) != null)
+                if (!File.Exists(path))
                 {
-                    if (first && skipHeader)
-                    {
-                        first = false;
-                        continue;
-                    }
+                    throw new DataCollectionException("CSV file not found: " + path);
+                }
 
-                    DroneMessage? msg;
-                    if (DroneMessageParser.TryParseCsvLine(line, out msg) && msg != null)
+                int count = 0;
+                int lineNo = 0;
+
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    string? line;
+                    bool first = true;
+
+                    while ((line = sr.ReadLine()) != null)
                     {
+                        lineNo++;
+
+                        if (first && skipHeader)
+                        {
+                            first = false;
+                            continue;
+                        }
+
+                        if (string.IsNullOrWhiteSpace(line))
+                        {
+                            continue;
+                        }
+
+                        DroneMessage? msg;
+                        bool ok = DroneMessageParser.TryParseCsvLine(line, out msg);
+
+                        if (!ok || msg == null)
+                        {
+                            throw new CsvParseException(lineNo, line, "Invalid CSV row or unsupported format.");
+                        }
+
                         AddMessage(msg);
                         count++;
                     }
                 }
-            }
 
-            return count;
+                return count;
+            }
+            catch (CsvParseException)
+            {
+                throw;
+            }
+            catch (IOException io)
+            {
+                throw new DataCollectionException("I/O error while reading CSV: " + path, io);
+            }
+            catch (UnauthorizedAccessException ua)
+            {
+                throw new DataCollectionException("Access denied while reading CSV: " + path, ua);
+            }
         }
+
 
         public void AddMessage(DroneMessage msg)
         {

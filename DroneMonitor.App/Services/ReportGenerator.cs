@@ -1,4 +1,5 @@
 using DroneMonitor.Core.Models;
+using DroneMonitor.Analytics.Extensions;
 
 namespace DroneMonitor.App.Services
 {
@@ -29,6 +30,11 @@ namespace DroneMonitor.App.Services
                                : track.TotalMessages;
 
                 Console.WriteLine("  Message rate: " + msgRate.ToString("F1") + " msgs/s");
+                string bestId = track.BestBasicId;
+                if (!string.IsNullOrEmpty(bestId))
+                {
+                    Console.WriteLine("  Basic ID (UAS): " + bestId);
+                }
 
                 if (lastMsg is DroneMessage lm)
                 {
@@ -36,6 +42,12 @@ namespace DroneMonitor.App.Services
                     string mac;
                     int? mc;
                     lm.Deconstruct(out ts, out mac, out mc);
+
+                    DroneMessage snapshot = (DroneMessage)lastMsg.Clone();
+
+                    Console.WriteLine("  Last snapshot: " + snapshot.Timestamp.ToString("O")
+                                      + " MAC=" + snapshot.MacAddress
+                                      + " MC=" + (snapshot.MessageCounter ?? -1));
 
                     Console.WriteLine("  Last: " + ts.ToString("O") + " MAC=" + mac + " MC=" + (mc ?? -1));
                     
@@ -47,6 +59,12 @@ namespace DroneMonitor.App.Services
                     Console.WriteLine("  Alt: " + (lm.PressureAltitudeFeet ?? double.NaN));
                     Console.WriteLine("  Type: " + lm.MessageType);
 
+                    string k;
+                    int total;
+                    TimeSpan dur;
+                    track.Deconstruct(out k, out total, out dur);
+
+                    Console.WriteLine("  Deconstruct(ext): Key=" + k + " Total=" + total + " Duration=" + dur);
                 }
 
                 if (track.HasAlerts)

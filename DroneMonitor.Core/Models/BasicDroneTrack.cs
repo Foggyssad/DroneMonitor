@@ -141,5 +141,46 @@ namespace DroneMonitor.Core.Models
             return merged;
         }
 
+        private static bool IsLikelyHexUasId(string s)
+        {
+            if (string.IsNullOrEmpty(s))
+                return false;
+
+            if (s.Length != 20)
+                return false;
+
+            for (int i = 0; i < s.Length; i++)
+            {
+                char c = s[i];
+                bool hex =
+                    (c >= '0' && c <= '9') ||
+                    (c >= 'A' && c <= 'F') ||
+                    (c >= 'a' && c <= 'f');
+
+                if (!hex)
+                    return false;
+            }
+
+            return true;
+        }
+
+        public string BestBasicId
+        {
+            get
+            {
+                for (int i = 0; i < _messages.Count; i++)
+                {
+                    string id = _messages[i].BasicId;
+                    if (!string.IsNullOrEmpty(id) && IsLikelyHexUasId(id))
+                    {
+                        return id;
+                    }
+                }
+
+                return "";
+            }
+        }
+
+
     }
 }
